@@ -40,10 +40,12 @@ def extract_lines(lines):
 
 
 def populate_simulation_data(meta):
-    it = simulation_data.keys().__iter__()
-
-    for m in meta:
-        simulation_data[it.__next__()] = m
+    simulation_data['ROWS'] = meta[0]
+    simulation_data['COLUMNS'] = meta[1]
+    simulation_data['FLEET'] = meta[2]
+    simulation_data['RIDE_COUNT'] = meta[3]
+    simulation_data['BONUS'] = meta[4]
+    simulation_data['TIME'] = meta[5]
 
 
 def create_cars():
@@ -53,13 +55,23 @@ def create_cars():
 
 def simulate_scenario():
     sort_rides_by_end_time()
-    for i in range(simulation_data['TIME']):
-        print(i)
-        simulate_step(i)
+    # for i in range(simulation_data['TIME']):
+    #     print(i)
+    #     simulate_step(i)
+    for car in cars:
+        print(car.number)
+        simulate_car_route(car, simulation_data['TIME'])
 
 
-def simulate_car_route(car):
-    pass
+def simulate_car_route(car, max_time):
+    while max_time > car.busy_until:
+        print(car.busy_until)
+        car.filter_possible_rides(remaining_rides, car.busy_until)
+        if len(car.possible_rides) > 0:
+            car.take_ride(car.possible_rides[0], car.busy_until)
+            remaining_rides.remove(car.possible_rides[0])
+        else:
+            break
 
 
 def simulate_step(time_now):
@@ -80,10 +92,10 @@ def sort_rides_by_end_time():
 
 
 def main():
-    get_input('e_high_bonus.in')
+    get_input('data_sets/b_should_be_easy.in')
     create_cars()
     simulate_scenario()
-    write_result_to_file('result_e.txt')
+    write_result_to_file('results/result_b.txt')
 
 
 if __name__ == '__main__':
